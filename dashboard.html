@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Anonymous BTC Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-page">
+
+  <header class="dashboard-header">
+
+    <div class="logo">
+      <span>₿</span>
+      <strong>Anonymous BTC</strong>
+    </div>
+
+    <button onclick="logout()" class="logout-button">
+      Logout
+    </button>
+
+  </header>
+
+  <main class="dashboard-container">
+
+    <div class="real-banner">
+      REAL DASHBOARD — All balances and activity shown here are live. 
+    </div>
+
+    <section class="welcome">
+      <p>Welcome back,</p>
+      <h1 id="userName">User</h1>
+      <span id="userEmail"></span>
+    </section>
+
+    <section class="balance-card">
+
+      <p>Total Real Balance</p>
+
+      <h2>$0.00</h2>
+
+      <span>
+        Available real balance
+      </span>
+
+    </section>
+
+    <section class="stats">
+
+      <div class="stat-card">
+        <p>Portfolio</p>
+        <h3>$0.00</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Profit / Loss</p>
+        <h3>$0.00</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Plan</p>
+        <h3 id="userPlan">None</h3>
+      </div>
+
+    </section>
+
+    <section class="dashboard-actions">
+
+      <button onclick="realMessage()">
+        Deposit
+      </button>
+
+      <button onclick="realMessage()">
+        Withdraw
+      </button>
+
+      <button onclick="realMessage()">
+        Transactions
+      </button>
+
+      <button onclick="realMessage()">
+        Profile
+      </button>
+
+    </section>
+
+    <section class="activity">
+
+      <h2>Recent Activity</h2>
+
+      <div class="activity-item">
+        <span>Account created</span>
+        <strong>$0.00</strong>
+      </div>
+
+      <div class="activity-item">
+        <span>Real portfolio balance</span>
+        <strong>$0.00</strong>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="auth.js"></script>
+
+  <script>
+    loadDashboard();
+  </script>
+
+</body>
+</html>
