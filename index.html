@@ -122,16 +122,35 @@
 
     <div class="ticker-track">
 
-      <span>BTC/USD <b>$67,420.00</b> <i>+2.31%</i></span>
+      <span>
+  BTC/USD
+  <b id="btc-price">Loading...</b>
+  <i id="btc-change">...</i>
+</span>
 
-      <span>ETH/USD <b>$3,842.40</b> <i>+1.84%</i></span>
+<span>
+  ETH/USD
+  <b id="eth-price">Loading...</b>
+  <i id="eth-change">...</i>
+</span>
 
-      <span>BNB/USD <b>$612.20</b> <i>+0.91%</i></span>
+     <span>
+  BNB/USD
+  <b id="bnb-price">Loading...</b>
+  <i id="bnb-change">...</i>
+</span>
 
-      <span>SOL/USD <b>$174.35</b> <i>+3.42%</i></span>
+<span>
+  SOL/USD
+  <b id="sol-price">Loading...</b>
+  <i id="sol-change">...</i>
+</span>
 
-      <span>XRP/USD <b>$0.58</b> <i>+1.26%</i></span>
-
+<span>
+  XRP/USD
+  <b id="xrp-price">Loading...</b>
+  <i id="xrp-change">...</i>
+</span>
     </div>
 
   </div>
@@ -374,7 +393,7 @@
         <ul>
 
           <li>✓ Portfolio investment</li>
-          <li>✓ Educational dashboard</li>
+          <li>✓ 20% Return of investment</li>
           <li>✓ Market tracking live</li>
           <li>✓ Learning resources</li>
 
@@ -427,7 +446,7 @@
           <li>✓ Everything in Bronze</li>
           <li>✓ Advanced chart</li>
           <li>✓ Portfolio analytics</li>
-          <li>✓ Investments videos</li>
+          <li>✓ 50% Return of investment</li>
 
         </ul>
 
@@ -473,7 +492,7 @@
 
           <li>✓ Everything in Standard</li>
           <li>✓ Advanced analytics</li>
-          <li>✓ Multiple asset investment</li>
+          <li>✓ 75% Return of investment</li>
           <li>✓ Learning library</li>
 
         </ul>
@@ -899,5 +918,118 @@
 
   <script src="script.js"></script>
 
+<script>
+async function updateCryptoPrices() {
+  try {
+    const [btcResponse, ethResponse] = await Promise.all([
+      fetch("https://api.coinbase.com/v2/prices/BTC-USD/spot"),
+      fetch("https://api.coinbase.com/v2/prices/ETH-USD/spot")
+    ]);
+
+    const btcData = await btcResponse.json();
+    const ethData = await ethResponse.json();
+
+    const btcPrice = parseFloat(btcData.data.amount);
+    const ethPrice = parseFloat(ethData.data.amount);
+
+    document.getElementById("btc-price").textContent =
+      "$" + btcPrice.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+    document.getElementById("eth-price").textContent =
+      "$" + ethPrice.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+    updateChanges(btcPrice, ethPrice);
+
+  } catch (error) {
+    console.log("Unable to update crypto prices:", error);
+  }
+}
+
+let previousBTC = null;
+let previousETH = null;
+
+function updateChanges(btc, eth) {
+  if (previousBTC !== null) {
+    const btcPercent = ((btc - previousBTC) / previousBTC) * 100;
+
+    document.getElementById("btc-change").textContent =
+      (btcPercent >= 0 ? "+" : "") + btcPercent.toFixed(2) + "%";
+  }
+
+  if (previousETH !== null) {
+    const ethPercent = ((eth - previousETH) / previousETH) * 100;
+
+    document.getElementById("eth-change").textContent =
+      (ethPercent >= 0 ? "+" : "") + ethPercent.toFixed(2) + "%";
+  }
+
+  previousBTC = btc;
+  previousETH = eth;
+}
+
+updateCryptoPrices();
+
+// Update every 30 seconds
+setInterval(updateCryptoPrices, 30000);
+  </script> <script>
+async function updateCryptoPrices() {
+  try {
+    const url =
+      "https://api.coingecko.com/api/v3/simple/price" +
+      "?ids=bitcoin,ethereum,binancecoin,solana,ripple" +
+      "&vs_currencies=usd" +
+      "&include_24hr_change=true";
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    updateCoin("btc", data.bitcoin);
+    updateCoin("eth", data.ethereum);
+    updateCoin("bnb", data.binancecoin);
+    updateCoin("sol", data.solana);
+    updateCoin("xrp", data.ripple);
+
+  } catch (error) {
+    console.log("Unable to update crypto prices:", error);
+  }
+}
+
+function updateCoin(symbol, coin) {
+  if (!coin) return;
+
+  const priceElement =
+    document.getElementById(symbol + "-price");
+
+  const changeElement =
+    document.getElementById(symbol + "-change");
+
+  if (!priceElement || !changeElement) return;
+
+  priceElement.textContent =
+    "$" + Number(coin.usd).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  const change = Number(coin.usd_24h_change);
+
+  changeElement.textContent =
+    (change >= 0 ? "+" : "") +
+    change.toFixed(2) +
+    "%";
+}
+
+updateCryptoPrices();
+
+setInterval(updateCryptoPrices, 30000);
+</script>
+
 </body>
+</html></body>
         </html>
