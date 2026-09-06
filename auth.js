@@ -16,9 +16,7 @@ function saveUsers(users) {
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
-
-  registerForm.addEventListener("submit", function(event) {
-
+  registerForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const name = document.getElementById("name").value.trim();
@@ -32,41 +30,50 @@ if (registerForm) {
       return;
     }
 
-    let users = getUsers();
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+      });
 
-    const existingUser = users.find(user => user.email === email);
+      if (error) {
+        alert(error.message);
+        return;
+      }
 
-    if (existingUser) {
-      alert("An account with this email already exists.");
-      return;
+      if (!data.user) {
+        alert("Account could not be created.");
+        return;
+      }
+
+      const selectedPlan =
+        new URLSearchParams(window.location.search).get("plan") || "None";
+
+      const { error: profileError } = await supabaseClient
+        .from("students")
+        .insert({
+          id: data.user.id,
+          name: name,
+          email: email,
+          balance: 0,
+          plan: selectedPlan
+        });
+
+      if (profileError) {
+        alert("Account created, but profile setup failed: " + profileError.message);
+        return;
+      }
+
+      alert("Real account created successfully!");
+
+      window.location.href = "dashboard.html";
+
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
     }
-
-    const selectedPlan =
-    new URLSearchParams(window.location.search).get("plan") || "None";
-
-const newUser = {
-    name: name,
-    email: email,
-    password: password,
-    balance: 0,
-    plan: selectedPlan
-};
-
-    users.push(newUser);
-
-    saveUsers(users);
-
-    localStorage.setItem(
-      "btcCurrentUser",
-      JSON.stringify(newUser)
-    );
-
-    window.location.href = "dashboard.html";
-
   });
-
-}
-
+        }
 
 // LOGIN
 
