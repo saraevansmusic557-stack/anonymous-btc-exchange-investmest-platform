@@ -41,13 +41,16 @@ if (registerForm) {
       return;
     }
 
-    const newUser = {
-      name: name,
-      email: email,
-      password: password,
-      balance: 0,
-      plan: "None"
-    };
+    const selectedPlan =
+    new URLSearchParams(window.location.search).get("plan") || "None";
+
+const newUser = {
+    name: name,
+    email: email,
+    password: password,
+    balance: 0,
+    plan: selectedPlan
+};
 
     users.push(newUser);
 
