@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Anonymous BTC Real</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-page">
+
+<header class="dashboard-header">
+
+  <div class="logo">
+    <span>₿</span>
+    <strong>Anonymous BTC</strong>
+  </div>
+
+  <a href="dashboard.html" class="logout-button">
+    Dashboard
+  </a>
+
+</header>
+
+<main class="dashboard-container">
+
+  <div class="activity">
+
+    <h2>My Profile</h2>
+
+    <div class="profile-row">
+      <span>Full Name</span>
+      <strong id="profileName"></strong>
+    </div>
+
+    <div class="profile-row">
+      <span>Email Address</span>
+      <strong id="profileEmail"></strong>
+    </div>
+
+    <div class="profile-row">
+      <span>Account Type</span>
+      <strong>Real Account</strong>
+    </div>
+
+    <div class="profile-row">
+      <span>Plan</span>
+      <strong id="profilePlan"></strong>
+    </div>
+
+    <div class="profile-row">
+      <span>Balance</span>
+      <strong>$0.00</strong>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+
+const currentUser =
+  JSON.parse(localStorage.getItem("btcCurrentUser"));
+
+if (!currentUser) {
+
+  window.location.href = "login.html";
+
+} else {
+
+  document.getElementById("profileName").textContent =
+    currentUser.name;
+
+  document.getElementById("profileEmail").textContent =
+    currentUser.email;
+
+  document.getElementById("profilePlan").textContent =
+    currentUser.plan || "None";
+
+}
+
+</script>
+
+</body>
+</html>
