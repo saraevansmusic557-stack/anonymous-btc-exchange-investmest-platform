@@ -978,6 +978,7 @@ updateCryptoPrices();
 // Update every 30 seconds
 setInterval(updateCryptoPrices, 30000);
   </script> <script>
+<script>
 async function updateCryptoPrices() {
   try {
     const url =
@@ -1003,15 +1004,7 @@ async function updateCryptoPrices() {
 function updateCoin(symbol, coin) {
   if (!coin) return;
 
-  const priceElement =
-    document.getElementById(symbol + "-price");
-
-  const changeElement =
-    document.getElementById(symbol + "-change");
-
-  if (!priceElement || !changeElement) return;
-
-  priceElement.textContent =
+  const price =
     "$" + Number(coin.usd).toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -1019,15 +1012,46 @@ function updateCoin(symbol, coin) {
 
   const change = Number(coin.usd_24h_change);
 
-  changeElement.textContent =
+  const changeText =
     (change >= 0 ? "+" : "") +
     change.toFixed(2) +
     "%";
+
+  // TOP TICKER
+  const tickerPrice =
+    document.getElementById(symbol + "-price");
+
+  const tickerChange =
+    document.getElementById(symbol + "-change");
+
+  if (tickerPrice) {
+    tickerPrice.textContent = price;
+  }
+
+  if (tickerChange) {
+    tickerChange.textContent = changeText;
+  }
+
+  // MARKET CARDS
+  const marketPrice =
+    document.getElementById(symbol + "-market-price");
+
+  const marketChange =
+    document.getElementById(symbol + "-market-change");
+
+  if (marketPrice) {
+    marketPrice.textContent = price;
+  }
+
+  if (marketChange) {
+    marketChange.textContent = changeText;
+  }
 }
 
 updateCryptoPrices();
 
 setInterval(updateCryptoPrices, 30000);
+</script>
 </script>
 
 </body>
