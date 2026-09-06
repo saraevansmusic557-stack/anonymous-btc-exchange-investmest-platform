@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions - Anonymous BTC Real</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-page">
+
+<header class="dashboard-header">
+
+  <div class="logo">
+    <span>₿</span>
+    <strong>Anonymous BTC</strong>
+  </div>
+
+  <a href="dashboard.html" class="logout-button">
+    Dashboard
+  </a>
+
+</header>
+
+<main class="dashboard-container">
+
+  <div class="activity">
+
+    <h2>Transaction History</h2>
+
+    <div id="transactionList"></div>
+
+  </div>
+
+</main>
+
+<script>
+
+const currentUser =
+  JSON.parse(localStorage.getItem("btcCurrentUser"));
+
+const transactionList =
+  document.getElementById("transactionList");
+
+if (!currentUser) {
+
+  window.location.href = "login.html";
+
+} else {
+
+  transactionList.innerHTML = `
+    <div class="activity-item">
+      <span>Account created</span>
+      <strong>$0.00</strong>
+    </div>
+
+    <div class="activity-item">
+      <span>Portfolio balance</span>
+      <strong>$0.00</strong>
+    </div>
+  `;
+
+}
+
+</script>
+
+</body>
+</html>
