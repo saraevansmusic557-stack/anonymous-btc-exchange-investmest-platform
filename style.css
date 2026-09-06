@@ -1386,3 +1386,80 @@ footer {
   }
 
   }
+.dashboard-actions a {
+  padding: 14px;
+  background: #0b1727;
+  border: 1px solid #315071;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dashboard-actions a:hover {
+  border-color: #398cff;
+}
+
+.deposit-box {
+  margin-top: 25px;
+  padding: 25px;
+  background: #07111f;
+  border: 1px solid #263852;
+  border-radius: 10px;
+}
+
+.btc-address {
+  margin: 15px 0;
+  padding: 15px;
+  background: #050e19;
+  border: 1px solid #33445c;
+  border-radius: 7px;
+  word-break: break-all;
+  color: #62b0ff;
+}
+
+.deposit-box button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 7px;
+  background: #1769e8;
+  color: white;
+  cursor: pointer;
+}
+
+.small-note {
+  margin-top: 18px;
+  color: #8d9bae;
+  font-size: 13px;
+}
+
+.withdraw-step {
+  padding: 18px 0;
+  border-bottom: 1px solid #263852;
+}
+
+.withdraw-step strong {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.withdraw-step p {
+  color: #9caabd;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #263852;
+}
+
+.profile-row span {
+  color: #9caabd;
+}
+
+.profile-row strong {
+  text-align: right;
+}
