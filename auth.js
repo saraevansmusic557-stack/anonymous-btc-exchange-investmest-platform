@@ -60,20 +60,19 @@ if (registerForm) {
         });
 
       if (profileError) {
-        alert("Account created, but profile setup failed: " + profileError.message);
+        alert("Account created, but profile setup failed.");
+        console.error(profileError);
         return;
       }
-
-      alert("Real account created successfully!");
 
       window.location.href = "dashboard.html";
 
     } catch (error) {
       console.error(error);
-      alert("Something went wrong. Please try again.");
+      alert("Something went wrong.");
     }
   });
-        }
+  }
 
 // LOGIN
 
