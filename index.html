@@ -983,7 +983,7 @@ async function updateCryptoPrices() {
   try {
     const url =
       "https://api.coingecko.com/api/v3/simple/price" +
-      "?ids=bitcoin,ethereum,binancecoin,solana,ripple" +
+      "?ids=bitcoin,ethereum,solana,ripple" +
       "&vs_currencies=usd" +
       "&include_24hr_change=true";
 
@@ -991,8 +991,7 @@ async function updateCryptoPrices() {
     const data = await response.json();
 
     updateCoin("btc", data.bitcoin);
-    updateCoin("eth", data.ethereum);
-    updateCoin("bnb", data.binancecoin);
+    updateCoin("eth", data.ethereum) 
     updateCoin("sol", data.solana);
     updateCoin("xrp", data.ripple);
 
