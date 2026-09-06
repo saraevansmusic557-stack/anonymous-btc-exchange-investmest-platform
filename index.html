@@ -978,81 +978,87 @@ updateCryptoPrices();
 // Update every 30 seconds
 setInterval(updateCryptoPrices, 30000);
   </script> <script>
-<script>
 async function updateCryptoPrices() {
   try {
-    const url =
-      "https://api.coingecko.com/api/v3/simple/price" +
-      "?ids=bitcoin,ethereum,solana,ripple" +
-      "&vs_currencies=usd" +
-      "&include_24hr_change=true";
+    const response = await fetch(
+      "https://data-api.binance.vision/api/v3/ticker/24hr"
+    );
 
-    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Market data request failed");
+    }
+
     const data = await response.json();
 
-    updateCoin("btc", data.bitcoin);
-    updateCoin("eth", data.ethereum) 
-    updateCoin("sol", data.solana);
-    updateCoin("xrp", data.ripple);
+    const coins = {
+      BTCUSDT: "btc",
+      ETHUSDT: "eth",
+      BNBUSDT: "bnb",
+      SOLUSDT: "sol",
+      XRPUSDT: "xrp"
+    };
 
-  } catch (error) {
-    console.log("Unable to update crypto prices:", error);
-  }
-}
+    Object.keys(coins).forEach(symbol => {
+      const coin = data.find(item => item.symbol === symbol);
 
-function updateCoin(symbol, coin) {
-  if (!coin) return;
+      if (!coin) return;
 
-  const price =
-    "$" + Number(coin.usd).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      const name = coins[symbol];
+
+      const price =
+        "$" + Number(coin.lastPrice).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+      const change =
+        Number(coin.priceChangePercent);
+
+      const changeText =
+        (change >= 0 ? "+" : "") +
+        change.toFixed(2) +
+        "%";
+
+      const tickerPrice =
+        document.getElementById(name + "-price");
+
+      const tickerChange =
+        document.getElementById(name + "-change");
+
+      const marketPrice =
+        document.getElementById(name + "-market-price");
+
+      const marketChange =
+        document.getElementById(name + "-market-change");
+
+      if (tickerPrice) {
+        tickerPrice.textContent = price;
+      }
+
+      if (tickerChange) {
+        tickerChange.textContent = changeText;
+      }
+
+      if (marketPrice) {
+        marketPrice.textContent = price;
+      }
+
+      if (marketChange) {
+        marketChange.textContent = changeText;
+      }
     });
 
-  const change = Number(coin.usd_24h_change);
-
-  const changeText =
-    (change >= 0 ? "+" : "") +
-    change.toFixed(2) +
-    "%";
-
-  // TOP TICKER
-  const tickerPrice =
-    document.getElementById(symbol + "-price");
-
-  const tickerChange =
-    document.getElementById(symbol + "-change");
-
-  if (tickerPrice) {
-    tickerPrice.textContent = price;
-  }
-
-  if (tickerChange) {
-    tickerChange.textContent = changeText;
-  }
-
-  // MARKET CARDS
-  const marketPrice =
-    document.getElementById(symbol + "-market-price");
-
-  const marketChange =
-    document.getElementById(symbol + "-market-change");
-
-  if (marketPrice) {
-    marketPrice.textContent = price;
-  }
-
-  if (marketChange) {
-    marketChange.textContent = changeText;
+  } catch (error) {
+    console.error("Crypto price update failed:", error);
   }
 }
 
 updateCryptoPrices();
 
 setInterval(updateCryptoPrices, 30000);
-</script>
+                                </script>
 </script>
 
 </body>
-</html></body>
+</html> </body>
         </html>
