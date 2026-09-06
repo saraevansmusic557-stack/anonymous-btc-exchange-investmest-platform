@@ -60,9 +60,15 @@ if (registerForm) {
         });
 
       if (profileError) {
-        alert("Account created, but profile setup failed.");
-        console.error(profileError);
-        return;
+  alert(
+    "Profile setup failed: " +
+    profileError.message +
+    "\n\nCode: " +
+    profileError.code
+  );
+
+  console.error(profileError);
+  return;
       }
 
       window.location.href = "dashboard.html";
