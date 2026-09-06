@@ -1104,3 +1104,285 @@ footer {
   }
 
   }
+/* ================================
+   REAL ACCOUNT SYSTEM
+================================ */
+
+.auth-page {
+  min-height: 100vh;
+  background: #07111f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 470px;
+  background: #0b1727;
+  padding: 35px;
+  border-radius: 14px;
+  border: 1px solid #263852;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+
+.logo span {
+  width: 42px;
+  height: 42px;
+  background: #b40000;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.auth-box h1 {
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.subtitle {
+  color: #aeb9c9;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.real-warning,
+.real-banner {
+  background: #332500;
+  border: 1px solid #7c5d00;
+  color: #ffd95a;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+.auth-box label {
+  display: block;
+  margin: 17px 0 8px;
+  color: #d9e1ed;
+  font-weight: bold;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 7px;
+  border: 1px solid #33445c;
+  background: #07111f;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.auth-box input:focus {
+  border-color: #398cff;
+}
+
+.main-button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 15px;
+  border: none;
+  border-radius: 7px;
+  background: #1769e8;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.main-button:hover {
+  background: #2580ff;
+}
+
+.bottom-text {
+  text-align: center;
+  color: #aeb9c9;
+  margin-top: 25px;
+}
+
+.bottom-text a,
+.back-link {
+  color: #55a7ff;
+  text-decoration: none;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 25px;
+}
+
+
+/* DASHBOARD */
+
+.dashboard-page {
+  min-height: 100vh;
+  background: #07111f;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-header {
+  height: 75px;
+  padding: 0 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #050e19;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.logout-button {
+  padding: 10px 18px;
+  border: 1px solid #344961;
+  background: transparent;
+  color: white;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.dashboard-container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 35px auto;
+}
+
+.welcome {
+  margin: 30px 0;
+}
+
+.welcome p {
+  color: #8fa0b6;
+  margin-bottom: 5px;
+}
+
+.welcome h1 {
+  font-size: 32px;
+  margin: 0 0 8px;
+}
+
+.welcome span {
+  color: #8fa0b6;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #0e48bb, #071b53);
+  border-radius: 14px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.balance-card p {
+  color: #b8ccef;
+}
+
+.balance-card h2 {
+  font-size: 45px;
+  margin: 15px 0;
+}
+
+.balance-card span {
+  color: #a9bee9;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.stat-card {
+  background: #0b1727;
+  border: 1px solid #263852;
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.stat-card p {
+  color: #899bb2;
+}
+
+.stat-card h3 {
+  font-size: 24px;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.dashboard-actions button {
+  padding: 14px;
+  background: #0b1727;
+  border: 1px solid #315071;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.activity {
+  background: #0b1727;
+  border: 1px solid #263852;
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.activity h2 {
+  margin-bottom: 20px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #1d2b3d;
+  color: #b7c3d2;
+}
+
+.activity-item strong {
+  color: #61d49a;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .auth-box {
+    padding: 25px 20px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .balance-card h2 {
+    font-size: 38px;
+  }
+
+  .dashboard-header {
+    padding: 0 20px;
+  }
+
+  }
