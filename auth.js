@@ -7,7 +7,7 @@ function getUsers() {
 }
 
 function saveUsers(users) {
-  localStorage.setItem("btcRealUsers", JSON.stringify(users));
+  localStorage.setItem("btcrealUsers", JSON.stringify(users));
 }
 
 
