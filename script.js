@@ -58,19 +58,19 @@ function selectPlan(plan) {
 
   if (plan === "Bronze") {
 
-    balance.textContent = "$20.00";
+    balance.textContent = "$100.00 - $1000.00";
 
   }
 
   if (plan === "Standard") {
 
-    balance.textContent = "$100.00";
+    balance.textContent = "$1000.00 - $5000.00";
 
   }
 
   if (plan === "Gold") {
 
-    balance.textContent = "$500.00";
+    balance.textContent = "$5000.00 - Unlimited";
 
   }
 
