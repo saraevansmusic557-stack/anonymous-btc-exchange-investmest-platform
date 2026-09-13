@@ -1,1 +1,468 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Support Admin</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .topbar {
+            background: #111827;
+            color: white;
+            padding: 18px 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .users {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .users h3 {
+            padding: 15px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: #f3f4f6;
+        }
+
+        .user-item.active {
+            background: #e5e7eb;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+
+        .student {
+            background: white;
+            margin-right: auto;
+        }
+
+        .support {
+            background: #2563eb;
+            color: white;
+            margin-left: auto;
+        }
+
+        .reply-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        #replyInput {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        #sendReply {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 700px) {
+            .users {
+                width: 120px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    💬 Support Admin
+</div>
+
+<div class="layout">
+
+    <div class="users">
+        <h3>Students</h3>
+        <div id="userList">
+            Loading...
+        </div>
+    </div>
+
+    <div class="chat">
+
+        <div class="chat-header" id="chatHeader">
+            Select a student
+        </div>
+
+        <div id="messages"></div>
+
+        <div class="reply-area">
+            <input
+                type="text"
+                id="replyInput"
+                placeholder="Type your reply..."
+            >
+
+            <button id="sendReply">
+                Send
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let currentStudent = null;
+let allMessages = [];
+
+
+// ===============================
+// CHECK ADMIN
+// ===============================
+
+async function checkAdmin() {
+
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
+
+    if (error || !user) {
+        alert("Please log in first.");
+        window.location.href = "login.html";
+        return false;
+    }
+
+    const { data: profile, error: profileError } =
+        await supabaseClient
+            .from("students")
+            .select("role")
+            .eq("id", user.id)
+            .maybeSingle();
+
+    if (
+        profileError ||
+        !profile ||
+        profile.role !== "admin"
+    ) {
+        alert("Access denied.");
+        window.location.href = "dashboard.html";
+        return false;
+    }
+
+    return true;
+}
+
+
+// ===============================
+// LOAD STUDENTS
+// ===============================
+
+async function loadStudents() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("support_messages")
+            .select("user_id")
+            .order("created_at", {
+                ascending: false
+            });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const uniqueUsers = [
+        ...new Set(data.map(row => row.user_id))
+    ];
+
+    const userList =
+        document.getElementById("userList");
+
+    userList.innerHTML = "";
+
+    for (const userId of uniqueUsers) {
+
+        const { data: student } =
+            await supabaseClient
+                .from("students")
+                .select("name,email")
+                .eq("id", userId)
+                .maybeSingle();
+
+        const div =
+            document.createElement("div");
+
+        div.className = "user-item";
+
+        div.innerHTML = `
+            <strong>
+                ${student?.name || "Student"}
+            </strong>
+
+            <div class="user-email">
+                ${student?.email || ""}
+            </div>
+        `;
+
+        div.onclick = function () {
+            selectStudent(userId, student);
+        };
+
+        userList.appendChild(div);
+    }
+}
+
+
+// ===============================
+// SELECT STUDENT
+// ===============================
+
+async function selectStudent(userId, student) {
+
+    currentStudent = userId;
+
+    document.getElementById("chatHeader")
+        .textContent =
+        student?.name ||
+        student?.email ||
+        "Student";
+
+    await loadConversation();
+}
+
+
+// ===============================
+// LOAD CONVERSATION
+// ===============================
+
+async function loadConversation() {
+
+    if (!currentStudent) return;
+
+    const { data, error } =
+        await supabaseClient
+            .from("support_messages")
+            .select("*")
+            .eq("user_id", currentStudent)
+            .order("created_at", {
+                ascending: true
+            });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    allMessages = data || [];
+
+    renderMessages();
+}
+
+
+// ===============================
+// DISPLAY MESSAGES
+// ===============================
+
+function renderMessages() {
+
+    const box =
+        document.getElementById("messages");
+
+    box.innerHTML = "";
+
+    allMessages.forEach(message => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "message " +
+            (message.sender === "support"
+                ? "support"
+                : "student");
+
+        div.textContent = message.message;
+
+        box.appendChild(div);
+    });
+
+    box.scrollTop = box.scrollHeight;
+}
+
+
+// ===============================
+// SEND REPLY
+// ===============================
+
+document
+    .getElementById("sendReply")
+    .addEventListener("click", sendReply);
+
+
+document
+    .getElementById("replyInput")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            sendReply();
+        }
+
+    });
+
+
+async function sendReply() {
+
+    const input =
+        document.getElementById("replyInput");
+
+    const message =
+        input.value.trim();
+
+    if (!message || !currentStudent) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("support_messages")
+            .insert({
+
+                user_id: currentStudent,
+
+                sender: "support",
+
+                message: message
+
+            });
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Could not send reply:\n" +
+            error.message
+        );
+
+        return;
+    }
+
+    input.value = "";
+}
+
+
+// ===============================
+// REAL-TIME UPDATES
+// ===============================
+
+supabaseClient
+    .channel("support-admin-chat")
+    .on(
+        "postgres_changes",
+        {
+            event: "INSERT",
+            schema: "public",
+            table: "support_messages"
+        },
+        function(payload) {
+
+            allMessages.push(payload.new);
+
+            if (
+                currentStudent ===
+                payload.new.user_id
+            ) {
+                renderMessages();
+            }
+
+            loadStudents();
+        }
+    )
+    .subscribe();
+
+
+// ===============================
+// START
+// ===============================
+
+(async function() {
+
+    const allowed = await checkAdmin();
+
+    if (!allowed) return;
+
+    await loadStudents();
+
+})();
+
+</script>
+
+</body>
+</html>
