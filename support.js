@@ -1,11 +1,23 @@
 (function () {
-    // Create the support button
+    // Make sure Supabase is available
+    if (typeof supabaseClient === "undefined") {
+        console.error("Supabase client was not found.");
+        return;
+    }
+
+    // ===============================
+    // CREATE SUPPORT BUTTON
+    // ===============================
+
     const button = document.createElement("button");
     button.id = "supportButton";
     button.innerHTML = "💬";
     button.title = "Live Support";
 
-    // Create the chat window
+    // ===============================
+    // CREATE CHAT WINDOW
+    // ===============================
+
     const chat = document.createElement("div");
     chat.id = "supportChat";
 
@@ -15,12 +27,14 @@
                 <strong>Live Support</strong>
                 <small>We're here to help</small>
             </div>
+
             <button id="closeSupport">×</button>
         </div>
 
         <div id="supportMessages">
             <div class="support-welcome">
-                👋 Hello! Welcome to our support center.<br><br>
+                👋 Hello! Welcome to our support center.
+                <br><br>
                 How can we help you today?
             </div>
         </div>
@@ -40,7 +54,10 @@
     document.body.appendChild(button);
     document.body.appendChild(chat);
 
-    // Add the widget styling
+    // ===============================
+    // STYLES
+    // ===============================
+
     const style = document.createElement("style");
 
     style.textContent = `
@@ -125,6 +142,35 @@
             line-height: 1.5;
         }
 
+        .student-message {
+            background: #2563eb;
+            color: white;
+            padding: 10px 13px;
+            border-radius: 12px;
+            margin: 8px 0 8px auto;
+            max-width: 80%;
+            width: fit-content;
+            word-wrap: break-word;
+        }
+
+        .support-message {
+            background: white;
+            color: #333;
+            padding: 10px 13px;
+            border-radius: 12px;
+            margin: 8px auto 8px 0;
+            max-width: 80%;
+            width: fit-content;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .message-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 3px;
+        }
+
         .support-input-area {
             height: 65px;
             display: flex;
@@ -155,6 +201,11 @@
             font-size: 17px;
         }
 
+        #supportSend:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 500px) {
             #supportChat {
                 right: 10px;
@@ -176,53 +227,233 @@
 
     document.head.appendChild(style);
 
-    // Open chat
-    button.addEventListener("click", function () {
+    // ===============================
+    // OPEN / CLOSE CHAT
+    // ===============================
+
+    button.addEventListener("click", async function () {
         chat.style.display = "block";
         button.style.display = "none";
+
+        await loadMessages();
     });
 
-    // Close chat
-    document.getElementById("closeSupport").addEventListener("click", function () {
-        chat.style.display = "none";
-        button.style.display = "block";
-    });
+    document
+        .getElementById("closeSupport")
+        .addEventListener("click", function () {
+            chat.style.display = "none";
+            button.style.display = "block";
+        });
 
-    // Send message - temporary local test
-    document.getElementById("supportSend").addEventListener("click", sendSupportMessage);
+    // ===============================
+    // SEND MESSAGE
+    // ===============================
 
-    document.getElementById("supportInput").addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            sendSupportMessage();
-        }
-    });
+    document
+        .getElementById("supportSend")
+        .addEventListener("click", sendMessage);
 
-    function sendSupportMessage() {
+    document
+        .getElementById("supportInput")
+        .addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+    async function sendMessage() {
         const input = document.getElementById("supportInput");
+        const sendButton = document.getElementById("supportSend");
+
         const message = input.value.trim();
 
         if (!message) return;
 
-        const messageElement = document.createElement("div");
+        sendButton.disabled = true;
 
-        messageElement.style.cssText = `
-            background: #2563eb;
-            color: white;
-            padding: 10px 13px;
-            border-radius: 12px;
-            margin: 8px 0 8px auto;
-            max-width: 80%;
-            width: fit-content;
-            word-wrap: break-word;
-        `;
+        try {
+            // Get currently logged-in Supabase user
+            const {
+                data: { user },
+                error: userError
+            } = await supabaseClient.auth.getUser();
 
-        messageElement.textContent = message;
+            if (userError || !user) {
+                alert("Please log in to use live support.");
+                return;
+            }
 
-        document.getElementById("supportMessages").appendChild(messageElement);
+            const { error } = await supabaseClient
+                .from("support_messages")
+                .insert({
+                    user_id: user.id,
+                    sender: "student",
+                    message: message
+                });
 
-        input.value = "";
+            if (error) {
+                console.error("Support message error:", error);
+                alert("Message could not be sent. Please try again.");
+                return;
+            }
 
-        const messages = document.getElementById("supportMessages");
-        messages.scrollTop = messages.scrollHeight;
+            input.value = "";
+
+        } catch (error) {
+            console.error("Support error:", error);
+            alert("Something went wrong.");
+        } finally {
+            sendButton.disabled = false;
+        }
     }
+
+    // ===============================
+    // LOAD OLD MESSAGES
+    // ===============================
+
+    async function loadMessages() {
+        try {
+            const {
+                data: { user },
+                error: userError
+            } = await supabaseClient.auth.getUser();
+
+            if (userError || !user) {
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from("support_messages")
+                .select("*")
+                .eq("user_id", user.id)
+                .order("created_at", {
+                    ascending: true
+                });
+
+            if (error) {
+                console.error("Could not load support messages:", error);
+                return;
+            }
+
+            const messagesBox =
+                document.getElementById("supportMessages");
+
+            // Remove old messages but keep the welcome message
+            messagesBox.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                messagesBox.innerHTML = `
+                    <div class="support-welcome">
+                        👋 Hello! Welcome to our support center.
+                        <br><br>
+                        How can we help you today?
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(addMessageToScreen);
+
+            scrollToBottom();
+
+        } catch (error) {
+            console.error("Loading support messages failed:", error);
+        }
+    }
+
+    // ===============================
+    // DISPLAY MESSAGE
+    // ===============================
+
+    function addMessageToScreen(message) {
+        const messagesBox =
+            document.getElementById("supportMessages");
+
+        // Prevent duplicate display
+        if (
+            document.querySelector(
+                `[data-message-id="${message.id}"]`
+            )
+        ) {
+            return;
+        }
+
+        const messageElement =
+            document.createElement("div");
+
+        messageElement.dataset.messageId = message.id;
+
+        if (message.sender === "student") {
+            messageElement.className = "student-message";
+
+            messageElement.innerHTML = `
+                <div class="message-label">You</div>
+                ${escapeHtml(message.message)}
+            `;
+        } else {
+            messageElement.className = "support-message";
+
+            messageElement.innerHTML = `
+                <div class="message-label">Support</div>
+                ${escapeHtml(message.message)}
+            `;
+        }
+
+        messagesBox.appendChild(messageElement);
+
+        scrollToBottom();
+    }
+
+    // ===============================
+    // REAL-TIME MESSAGES
+    // ===============================
+
+    supabaseClient
+        .channel("student-support-chat")
+        .on(
+            "postgres_changes",
+            {
+                event: "INSERT",
+                schema: "public",
+                table: "support_messages"
+            },
+            async function (payload) {
+
+                const {
+                    data: { user }
+                } = await supabaseClient.auth.getUser();
+
+                if (!user) return;
+
+                if (payload.new.user_id === user.id) {
+                    addMessageToScreen(payload.new);
+                }
+            }
+        )
+        .subscribe();
+
+    // ===============================
+    // SCROLL
+    // ===============================
+
+    function scrollToBottom() {
+        const messagesBox =
+            document.getElementById("supportMessages");
+
+        if (messagesBox) {
+            messagesBox.scrollTop =
+                messagesBox.scrollHeight;
+        }
+    }
+
+    // ===============================
+    // BASIC HTML PROTECTION
+    // ===============================
+
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
 })();
