@@ -1462,39 +1462,4 @@ footer {
 
 .profile-row strong {
   text-align: right;
-}
-/* CRYPTO VIDEO MARKET BACKGROUND */
-
-.crypto-market-section {
-  position: relative;
-  overflow: hidden;
-  background: #07111f !important;
-}
-
-.crypto-bg-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.crypto-bg-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(5, 15, 30, 0.72);
-  z-index: 1;
-}
-
-.crypto-market-content {
-  position: relative;
-  z-index: 2;
-}
-
-/* Keep the crypto cards easy to read */
-.crypto-market-section .market-card {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(8px);
-                   } 
+} 
