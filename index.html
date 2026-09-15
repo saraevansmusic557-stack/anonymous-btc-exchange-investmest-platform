@@ -22,7 +22,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body> <body>
+
+  <!-- LANGUAGE TRANSLATOR -->
+  <div class="language-bar">
+    <div id="google_translate_element"></div>
+  </div> 
 
   <!-- REAL NOTICE -->
   <div class="real-bar">
@@ -1059,6 +1064,19 @@ setInterval(updateCryptoPrices, 30000);
                                 </script>
 </script>
 <script src="support.js"></script>
+ <script>
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,fr,es,de,it,pt,ar,zh-CN,ja,ko,ru,hi,sw,yo,ig',
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
+</html> </body>
 </html> </body>
         </html>
